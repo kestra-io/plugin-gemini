@@ -33,11 +33,11 @@
 <p align="center" style="color:grey;"><i>Get started with Kestra in 4 minutes.</i></p>
 
 
-# Kestra Plugin Template
+# Kestra Plugin Gemini
 
-> A template for creating Kestra plugins
+> Plugin to use [Gemini](https://gemini.google.com/) directly with an API Key
 
-This repository serves as a general template for creating a new [Kestra](https://github.com/kestra-io/kestra) plugin. It should take only a few minutes! Use this repository as a scaffold to ensure that you've set up the plugin correctly, including unit tests and CI/CD workflows.
+Through this plugin you can use [Gemini](https://gemini.google.com/) directly with an API Key, this allows you to use the same API Key to run multiple tasks and have the same account used for all of them.
 
 ![Kestra orchestrator](https://kestra.io/video.gif)
 
