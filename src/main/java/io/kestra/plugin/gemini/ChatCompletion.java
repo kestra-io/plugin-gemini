@@ -1,13 +1,11 @@
 package io.kestra.plugin.gemini;
 
 import com.google.genai.Client;
-import com.google.genai.types.*;
+import com.google.genai.types.GenerateContentResponse;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
-import io.kestra.core.models.executions.metrics.Counter;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
-import io.kestra.core.models.tasks.Task;
 import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -63,6 +61,8 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
         var renderedMessages = runContext.render(messages).asList(String.class);
 
         try (var client = Client.builder().apiKey(renderedApiKey).build()) {
+            // For multi-turn conversations, the full conversation history is sent to the model with each follow-up turn
+            // See: https://ai.google.dev/gemini-api/docs/text-generation#multi-turn-conversations
             var chat = client.chats.create(renderedModel);
 
             var responses = renderedMessages.stream()
@@ -83,16 +83,6 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
             return Output.builder()
                 .predictions(candidates.stream().map(Prediction::of).toList())
                 .build();
-        }
-    }
-
-    public record Prediction(Optional<List<SafetyRating>> safetyRatings, CitationMetadata citationMetadata,
-                             String content) {
-        public static Prediction of(Candidate candidate) {
-            return new Prediction(candidate.safetyRatings(),
-                candidate.citationMetadata().orElse(null),
-                candidate.content().map(Content::text).orElse("")
-            );
         }
     }
 
