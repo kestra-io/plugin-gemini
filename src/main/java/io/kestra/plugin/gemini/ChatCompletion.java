@@ -11,7 +11,6 @@ import io.kestra.core.models.tasks.Task;
 import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -27,7 +26,7 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 @NoArgsConstructor
 @Schema(
     title = "Complete a chat using the Gemini Client.",
-    description = "See https://github.com/googleapis/java-genai for more information."
+    description = "See [Gemini API about text completion](https://ai.google.dev/gemini-api/docs/text-generation) for more information."
 )
 @Plugin(
     examples = {
@@ -41,7 +40,7 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                 tasks:
                   - id: chat_completion
                     type: io.kestra.plugin.gemini.ChatCompletion
-                    apiKey: your_api_key
+                    apiKey: ${{ secrets.GEMINI_API_KEY }}
                     model: "gemini-2.5-flash-preview-05-20"
                     messages:
                       - "What is the capital of Japan? Answer with a unique word and without any punctuation."
@@ -50,18 +49,7 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
         )
     }
 )
-public class ChatCompletion extends Task implements RunnableTask<ChatCompletion.Output> {
-
-    @Schema(title = "Gemini API Key")
-    @NotNull
-    private Property<String> apiKey;
-
-    @Schema(
-        title = "Model",
-        description = "Specifies which generative model (e.g., 'gemini-1.5-flash', 'gemini-1.0-pro') to use for the completion."
-    )
-    @NotNull
-    private Property<String> model;
+public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatCompletion.Output> {
 
     @Schema(title = "Messages")
     @NotEmpty
@@ -96,12 +84,6 @@ public class ChatCompletion extends Task implements RunnableTask<ChatCompletion.
                 .predictions(candidates.stream().map(Prediction::of).toList())
                 .build();
         }
-    }
-
-    private void sendMetrics(RunContext runContext, List<GenerateContentResponseUsageMetadata> metadata) {
-        runContext.metric(Counter.of("candidate.token.count", metadata.stream().mapToInt(m -> m.candidatesTokenCount().orElse(0)).sum()));
-        runContext.metric(Counter.of("prompt.token.count", metadata.stream().mapToInt(m -> m.promptTokenCount().orElse(0)).sum()));
-        runContext.metric(Counter.of("total.token.count", metadata.stream().mapToInt(m -> m.totalTokenCount().orElse(0)).sum()));
     }
 
     public record Prediction(Optional<List<SafetyRating>> safetyRatings, CitationMetadata citationMetadata,
