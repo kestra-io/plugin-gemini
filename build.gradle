@@ -52,7 +52,7 @@ dependencies {
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
     compileOnly group: "io.kestra", name: "script", version: kestraVersion
 
-    implementation 'com.google.genai:google-genai:1.3.0'
+    implementation 'com.google.genai:google-genai:1.5.0'
 }
 
 
