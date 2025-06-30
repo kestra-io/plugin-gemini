@@ -38,8 +38,8 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                 tasks:
                   - id: chat_completion
                     type: io.kestra.plugin.gemini.ChatCompletion
-                    apiKey: ${{ secrets.GEMINI_API_KEY }}
-                    model: "gemini-2.5-flash-preview-05-20"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash"
                     messages:
                       - "What is the capital of Japan? Answer with a unique word and without any punctuation."
                       - "Who are you? Answer concisely."
