@@ -48,8 +48,8 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                 tasks:
                   - id: multimodal_completion
                     type: io.kestra.plugin.gemini.MultimodalCompletion
-                    apiKey: ${{ secrets.GEMINI_API_KEY }}
-                    model: "gemini-2.5-flash-preview-05-20"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash"
                     contents:
                       - content: Can you describe this image?
                       - mimeType: image/jpeg

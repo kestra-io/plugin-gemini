@@ -34,8 +34,8 @@ import java.util.List;
                 tasks:
                   - id: text_completion
                     type: io.kestra.plugin.gemini.TextCompletion
-                    apiKey: ${{ secrets.GEMINI_API_KEY }}
-                    model: "gemini-2.5-flash-preview-05-20"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash"
                     prompt: What color is the sky? Answer with a unique word and without any punctuation.
                 """
         )
