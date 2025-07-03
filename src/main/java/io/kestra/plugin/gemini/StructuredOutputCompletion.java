@@ -70,6 +70,7 @@ import java.util.Optional;
 public class StructuredOutputCompletion extends AbstractGemini implements RunnableTask<StructuredOutputCompletion.Output> {
 
     private static final String APPLICATION_JSON = "application/json";
+
     @Schema(title = "Prompt")
     @NotNull
     private Property<String> prompt;

@@ -29,7 +29,7 @@ class StructuredOutputCompletionTest {
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
-            .jsonResponseSchema(Property.ofValue("" +
+            .jsonResponseSchema(Property.ofValue(
                 """
                     {
                        "type": "ARRAY",
@@ -65,7 +65,7 @@ class StructuredOutputCompletionTest {
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
-            .jsonResponseSchema(Property.ofValue("" +
+            .jsonResponseSchema(Property.ofValue(
                 """
                      {
                         "type": "object",
