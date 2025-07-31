@@ -8,7 +8,7 @@ import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -50,7 +50,7 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatCompletion.Output> {
 
     @Schema(title = "Messages")
-    @NotEmpty
+    @NotNull
     private Property<List<String>> messages;
 
     @Override

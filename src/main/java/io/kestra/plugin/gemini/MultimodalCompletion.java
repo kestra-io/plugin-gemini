@@ -11,7 +11,6 @@ import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -63,7 +62,7 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     @Schema(
         title = "The chat content prompt for the model to respond to"
     )
-    @NotEmpty
+    @NotNull
     private Property<List<Content>> contents;
 
     @Override
