@@ -43,7 +43,7 @@ import java.util.Optional;
                 tasks:
                   - id: gemini_structured_json_completion
                     type: io.kestra.plugin.gemini.StructuredOutputCompletion
-                    apiKey: ${{ secrets.GEMINI_API_KEY }}
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
                     model: "gemini-2.5-flash-preview-05-20"
                     prompt: What are the weather predictions for tomorrow in London?
                     jsonResponseSchema: |
