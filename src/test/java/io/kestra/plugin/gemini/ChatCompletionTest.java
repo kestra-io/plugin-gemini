@@ -26,7 +26,12 @@ public class ChatCompletionTest {
         var chatCompletion = ChatCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue("gemini-2.5-flash-preview-05-20"))
-            .messages(Property.ofValue(List.of("What is the capital of Japan? Answer with a unique word and without any punctuation.")))
+            .messages(Property.ofValue(List.of(
+                new ChatCompletion.ChatMessage(
+                    ChatCompletion.ChatMessageType.USER,
+                    "What is the capital of Japan? Answer with a unique word and without any punctuation."
+                )
+            )))
             .build();
 
         var output = chatCompletion.run(runContext);
