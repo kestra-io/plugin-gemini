@@ -41,32 +41,32 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
                     model: "gemini-2.5-flash"
                     messages:
-                      - "What is the capital of Japan? Answer with a unique word and without any punctuation."
-                      - "Who are you? Answer concisely."
+                      - type: SYSTEM
+                        content: You are a helpful assistant, answer concisely, avoid overly casual language or unnecessary verbosity.
+                      - type: USER
+                        content: "What is the capital of France?"
                 """
         )
     }
 )
 public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatCompletion.Output> {
 
-    @Schema(title = "Messages")
+    @Schema(title = "List of chat messages in conversational order")
     @NotNull
-    private Property<List<String>> messages;
+    private Property<List<ChatMessage>> messages;
 
     @Override
     public Output run(RunContext runContext) throws Exception {
 
-        var renderedApiKey = runContext.render(apiKey).as(String.class).orElseThrow();
-        var renderedModel = runContext.render(model).as(String.class).orElseThrow();
-        var renderedMessages = runContext.render(messages).asList(String.class);
+        var rApiKey = runContext.render(apiKey).as(String.class).orElseThrow();
+        var rModel = runContext.render(model).as(String.class).orElseThrow();
+        var rMessages = runContext.render(messages).asList(ChatMessage.class);
 
-        try (var client = Client.builder().apiKey(renderedApiKey).build()) {
-            // For multi-turn conversations, the full conversation history is sent to the model with each follow-up turn
-            // See: https://ai.google.dev/gemini-api/docs/text-generation#multi-turn-conversations
-            var chat = client.chats.create(renderedModel);
+        try (var client = Client.builder().apiKey(rApiKey).build()) {
+            var chat = client.chats.create(rModel);
 
-            var responses = renderedMessages.stream()
-                .map(throwFunction(chat::sendMessage))
+            var responses = rMessages.stream()
+                .map(throwFunction(m -> chat.sendMessage(m.content())))
                 .toList();
 
             var candidates = responses.stream()
@@ -76,7 +76,11 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
                 .flatMap(List::stream)
                 .toList();
 
-            var metadata = responses.stream().map(GenerateContentResponse::usageMetadata).filter(Optional::isPresent).map(Optional::get).toList();
+            var metadata = responses.stream()
+                .map(GenerateContentResponse::usageMetadata)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
 
             sendMetrics(runContext, metadata);
 
@@ -91,5 +95,25 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
     public static class Output implements io.kestra.core.models.tasks.Output {
         @Schema(title = "List of text predictions made by the model.")
         private List<Prediction> predictions;
+    }
+
+    @Builder
+    public record ChatMessage(ChatMessageType type, String content) {
+    }
+
+    public enum ChatMessageType {
+        SYSTEM("system"),
+        AI("assistant"),
+        USER("user");
+
+        private final String role;
+
+        ChatMessageType(String role) {
+            this.role = role;
+        }
+
+        public String role() {
+            return role;
+        }
     }
 }
