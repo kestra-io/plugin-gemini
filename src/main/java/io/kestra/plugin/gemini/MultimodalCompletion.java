@@ -74,15 +74,11 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                 tasks:
                   - id: generate
                     type: io.kestra.plugin.gemini.MultimodalCompletion
-                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
                     contents:
                       - content: "{{ inputs.gen_prompt }}"
 
                   - id: edit
                     type: io.kestra.plugin.gemini.MultimodalCompletion
-                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
                     contents:
                       - content: "{{ inputs.edit_prompt }}"
                       - mimeType: "{{ outputs.generate.images[0].mimeType }}"
@@ -90,12 +86,16 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 
                   - id: analyze
                     type: io.kestra.plugin.gemini.MultimodalCompletion
-                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
                     contents:
                       - content: "Describe the mood and style of this image."
                       - mimeType: "{{ outputs.edit.images[0].mimeType }}"
                         content: "{{ outputs.edit.images[0].uri }}"
+
+                pluginDefaults:
+                  - type: io.kestra.plugin.gemini.MultimodalCompletion
+                    values:
+                      apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                      model: "gemini-2.5-flash-image-preview"
                 """
         )
     }
