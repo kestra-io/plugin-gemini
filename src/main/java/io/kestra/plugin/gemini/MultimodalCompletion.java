@@ -15,7 +15,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -147,13 +146,13 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
                         var data = blob.data().orElse(null);
                         if (mime != null && mime.startsWith("image/") && data != null) {
                             try {
-                                String ext = guessExtension(mime);
-                                File tempFile = runContext.workingDir().createTempFile(ext).toFile();
+                                var ext = guessExtension(mime);
+                                var tempFile = runContext.workingDir().createTempFile(ext).toFile();
 
                                 try (var fos = new FileOutputStream(tempFile)) {
                                     fos.write(data);
                                 }
-                                URI stored = runContext.storage().putFile(tempFile);
+                                var stored = runContext.storage().putFile(tempFile);
                                 images.add(GeneratedImage.builder()
                                     .mimeType(mime)
                                     .uri(stored)
@@ -188,11 +187,16 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     }
 
     private static String guessExtension(String mime) {
-        if (mime.equalsIgnoreCase("image/jpeg") || mime.equalsIgnoreCase("image/jpg")) return ".jpg";
-        if (mime.equalsIgnoreCase("image/png")) return ".png";
-        if (mime.equalsIgnoreCase("image/webp")) return ".webp";
-        if (mime.equalsIgnoreCase("image/gif")) return ".gif";
-        return ".img";
+        if (mime == null) return ".img";
+        return switch (mime.toLowerCase()) {
+            case "image/jpeg", "image/jpg" -> ".jpg";
+            case "image/png"               -> ".png";
+            case "image/webp"              -> ".webp";
+            case "image/gif"               -> ".gif";
+            case "image/bmp"               -> ".bmp";
+            case "image/tiff"              -> ".tiff";
+            default                        -> ".img";
+        };
     }
 
     private com.google.genai.types.Content toGeminiContent(RunContext runContext, Content content) throws IllegalVariableEvaluationException {
@@ -216,7 +220,7 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
 
     private Part createPart(RunContext runContext, String content, String mimeType) {
         try (var is = runContext.storage().getFile(URI.create(content))) {
-            byte[] bytes = is.readAllBytes();
+            var bytes = is.readAllBytes();
             return Part.fromBytes(bytes, mimeType);
         } catch (IOException e) {
             throw new RuntimeException(e);
