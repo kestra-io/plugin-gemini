@@ -56,6 +56,48 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                       - mimeType: image/jpeg
                         content: "{{ inputs.image }}"
                 """
+        ),
+        @Example(
+            title = "Generate, edit and analyze an image",
+            full = true,
+            code = """
+                id: gemini_multimodal_generate_edit_analyze
+                namespace: company.team
+
+                inputs:
+                  - id: gen_prompt
+                    type: STRING
+                    defaults: "a giant library floating in the clouds with glowing bookshelves"
+                  - id: edit_prompt
+                    type: STRING
+                    defaults: "transform the background into a cyberpunk cityscape at night"
+
+                tasks:
+                  - id: generate
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
+                    contents:
+                      - content: "{{ inputs.gen_prompt }}"
+
+                  - id: edit
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
+                    contents:
+                      - content: "{{ inputs.edit_prompt }}"
+                      - mimeType: "{{ outputs.generate.images[0].mimeType }}"
+                        content: "{{ outputs.generate.images[0].uri }}"
+
+                  - id: analyze
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
+                    contents:
+                      - content: "Describe the mood and style of this image."
+                      - mimeType: "{{ outputs.edit.images[0].mimeType }}"
+                        content: "{{ outputs.edit.images[0].uri }}"
+                """
         )
     }
 )
