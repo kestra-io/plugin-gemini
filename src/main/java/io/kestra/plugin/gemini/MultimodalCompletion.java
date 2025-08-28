@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -54,6 +55,48 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
                       - mimeType: image/jpeg
                         content: "{{ inputs.image }}"
                 """
+        ),
+        @Example(
+            title = "Generate, edit and analyze an image",
+            full = true,
+            code = """
+                id: gemini_multimodal_generate_edit_analyze
+                namespace: company.team
+
+                inputs:
+                  - id: gen_prompt
+                    type: STRING
+                    defaults: "a giant library floating in the clouds with glowing bookshelves"
+                  - id: edit_prompt
+                    type: STRING
+                    defaults: "transform the background into a cyberpunk cityscape at night"
+
+                tasks:
+                  - id: generate
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    contents:
+                      - content: "{{ inputs.gen_prompt }}"
+
+                  - id: edit
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    contents:
+                      - content: "{{ inputs.edit_prompt }}"
+                      - mimeType: "{{ outputs.generate.images[0].mimeType }}"
+                        content: "{{ outputs.generate.images[0].uri }}"
+
+                  - id: analyze
+                    type: io.kestra.plugin.gemini.MultimodalCompletion
+                    contents:
+                      - content: "Describe the mood and style of this image."
+                      - mimeType: "{{ outputs.edit.images[0].mimeType }}"
+                        content: "{{ outputs.edit.images[0].uri }}"
+
+                pluginDefaults:
+                  - type: io.kestra.plugin.gemini.MultimodalCompletion
+                    values:
+                      apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                      model: "gemini-2.5-flash-image-preview"
+                """
         )
     }
 )
@@ -68,23 +111,59 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     @Override
     public Output run(RunContext runContext) throws Exception {
 
-        var renderedApiKey = runContext.render(apiKey).as(String.class).orElseThrow();
-        var renderedModel = runContext.render(model).as(String.class).orElseThrow();
-        var renderedContents = runContext.render(contents).asList(Content.class);
+        var rApiKey = runContext.render(apiKey).as(String.class).orElseThrow();
+        var rModel = runContext.render(model).as(String.class).orElseThrow();
+        var rContents = runContext.render(contents).asList(Content.class);
 
-        try (var client = Client.builder().apiKey(renderedApiKey).build()) {
-            var response = client.models.generateContent(renderedModel, renderedContents.stream()
-                .map(throwFunction(c -> toGeminiContent(runContext, c))).toList(), null);
+        try (var client = Client.builder().apiKey(rApiKey).build()) {
+            var response = client.models.generateContent(
+                rModel,
+                rContents.stream().map(throwFunction(c -> toGeminiContent(runContext, c))).toList(),
+                null
+            );
 
             sendMetrics(runContext, response.usageMetadata().map(List::of).orElse(List.of()));
 
             var finishReason = response.finishReason();
-            var safetyRatings = response.candidates().flatMap(candidates -> candidates.getFirst().safetyRatings()).orElse(List.of()).stream()
-                .map(safetyRating -> new MultimodalCompletion.SafetyRating(
+            var safetyRatings = response.candidates()
+                .flatMap(candidates -> candidates.getFirst().safetyRatings())
+                .orElse(List.of()).stream()
+                .map(safetyRating -> new SafetyRating(
                     safetyRating.category().toString(),
                     safetyRating.probability().toString(),
                     safetyRating.blocked().orElse(false))
                 ).toList();
+
+            var images = new java.util.ArrayList<GeneratedImage>();
+            var parts = response.parts();
+
+            if (parts != null) {
+                for (var p : parts) {
+                    var blobOpt = p.inlineData();
+                    if (blobOpt.isPresent()) {
+                        var blob = blobOpt.get();
+                        var mime = blob.mimeType().orElse("");
+                        var data = blob.data().orElse(null);
+                        if (mime != null && mime.startsWith("image/") && data != null) {
+                            try {
+                                var ext = guessExtension(mime);
+                                var tempFile = runContext.workingDir().createTempFile(ext).toFile();
+
+                                try (var fos = new FileOutputStream(tempFile)) {
+                                    fos.write(data);
+                                }
+                                var stored = runContext.storage().putFile(tempFile);
+                                images.add(GeneratedImage.builder()
+                                    .mimeType(mime)
+                                    .uri(stored)
+                                    .build());
+                            } catch (IOException io) {
+                                runContext.logger().warn("Failed to persist generated image: {}", io.getMessage());
+                            }
+                        }
+                    }
+                }
+            }
 
             var output = Output.builder()
                 .finishReason(finishReason.toString())
@@ -98,32 +177,51 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
                 output.blocked(true);
             } else {
                 output.text(response.text());
+                if (!images.isEmpty()) {
+                    output.images(images);
+                }
             }
 
             return output.build();
         }
     }
 
+    private static String guessExtension(String mime) {
+        if (mime == null) return ".img";
+        return switch (mime.toLowerCase()) {
+            case "image/jpeg", "image/jpg" -> ".jpg";
+            case "image/png"               -> ".png";
+            case "image/webp"              -> ".webp";
+            case "image/gif"               -> ".gif";
+            case "image/bmp"               -> ".bmp";
+            case "image/tiff"              -> ".tiff";
+            default                        -> ".img";
+        };
+    }
+
     private com.google.genai.types.Content toGeminiContent(RunContext runContext, Content content) throws IllegalVariableEvaluationException {
 
-        var renderedContent = runContext.render(content.content).as(String.class).orElseThrow();
-        var renderedMimeType = runContext.render(content.mimeType).as(String.class).orElse(null);
-        var renderedRole = runContext.render(content.role).as(String.class).orElse("user");
+        var rContent = runContext.render(content.content).as(String.class).orElseThrow();
+        var rMimeType = runContext.render(content.mimeType).as(String.class).orElse(null);
+        var rRole = runContext.render(content.role).as(String.class).orElse("user");
 
         if (content.mimeType != null) {
             return com.google.genai.types.Content.builder()
-                .parts(List.of(createPart(runContext, renderedContent, renderedMimeType)))
-                .role(renderedRole)
+                .parts(List.of(createPart(runContext, rContent, rMimeType)))
+                .role(rRole)
                 .build();
         }
 
-        return com.google.genai.types.Content.builder().parts(List.of(Part.builder().text(renderedContent).build())).role(renderedRole).build();
+        return com.google.genai.types.Content.builder()
+            .parts(List.of(Part.builder().text(rContent).build()))
+            .role(rRole)
+            .build();
     }
 
     private Part createPart(RunContext runContext, String content, String mimeType) {
         try (var is = runContext.storage().getFile(URI.create(content))) {
-            byte[] partBytes = is.readAllBytes();
-            return Part.fromBytes(partBytes, mimeType);
+            var bytes = is.readAllBytes();
+            return Part.fromBytes(bytes, mimeType);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -138,8 +236,12 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
         String text;
 
         @Schema(
-            title = "The response safety ratings"
+            title = "Generated images stored in Kestra and exposed as URIs",
+            description = "When using image-generating/editing models like gemini-2.5-flash-image-preview, this field contains one or more Kestra storage URIs."
         )
+        List<GeneratedImage> images;
+
+        @Schema(title = "The response safety ratings")
         List<SafetyRating> safetyRatings;
 
         @Schema(
@@ -159,41 +261,36 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     }
 
     @Builder
+    @Getter
+    @EqualsAndHashCode
+    public static class GeneratedImage {
+        @Schema(title = "IANA mime type of the image, e.g. image/jpeg")
+        private final String mimeType;
+
+        @Schema(title = "Kestra storage URI of the image")
+        private final URI uri;
+
+        @Override
+        public String toString() {
+            return uri.toString();
+        }
+    }
+
+    @Builder
     @Value
     public static class Content {
-        @Schema(
-            title = "Mime type of the content, use it only when the content is not text."
-        )
         Property<String> mimeType;
 
-        @Schema(
-            title = "The content itself, should be a string for text content or a Kestra internal storage URI for other content types.",
-            description = "If the content is not text, the `mimeType` property must be set."
-        )
         @NotNull
         Property<String> content;
 
-        @Schema(
-            title = "The content role, defaults to \"user\"."
-        )
         Property<String> role = Property.ofValue("user");
     }
 
     @Value
     public static class SafetyRating {
-        @Schema(
-            title = "Safety category."
-        )
         String category;
-
-        @Schema(
-            title = "Safety rating probability."
-        )
         String probability;
-
-        @Schema(
-            title = "Whether the response has been blocked for safety reasons."
-        )
         boolean blocked;
     }
 }
