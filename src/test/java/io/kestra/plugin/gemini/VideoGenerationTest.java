@@ -4,14 +4,14 @@ import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContextFactory;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.time.Duration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @KestraTest
 public class VideoGenerationTest {
@@ -26,7 +26,7 @@ public class VideoGenerationTest {
     private RunContextFactory runContextFactory;
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "GEMINI_API_KEY", matches = ".*")
+    @Disabled // costs too much
     void generateVideo_whenValidParametersProvided_shouldGenerateVideo() throws Exception {
         var runContext = runContextFactory.of();
         var videoGeneration = VideoGeneration.builder()
@@ -47,9 +47,7 @@ public class VideoGenerationTest {
 
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "GCS_PROJECT", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "GCS_LOCATION", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "GCS_BUCKET_LOCATION", matches = ".*")
+    @Disabled // costs too much
     void generateVideo_whenUsingVertexAIWithGcsOutput_shouldGenerateVideo() throws Exception {
         var runContext = runContextFactory.of();
         var videoGeneration = VideoGeneration.builder()
@@ -71,9 +69,7 @@ public class VideoGenerationTest {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "GCS_PROJECT", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "GCS_LOCATION", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "GCS_BUCKET_LOCATION", matches = ".*")
+    @Disabled // costs too much
     void generateVideo_whenUsingVertexAIWithAudioAndGcsOutput_shouldGenerateVideoWithAudio() throws Exception {
         var runContext = runContextFactory.of();
         var videoGeneration = VideoGeneration.builder()
@@ -95,7 +91,7 @@ public class VideoGenerationTest {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "GEMINI_API_KEY", matches = ".*")
+    @Disabled // costs too much
     void generateVideo_whenNegativePromptProvided_shouldGenerateVideo() throws Exception {
         var runContext = runContextFactory.of();
         var videoGeneration = VideoGeneration.builder()
@@ -112,11 +108,10 @@ public class VideoGenerationTest {
 
         assertThat(output.getVideoUri(), is(notNullValue()));
         assertThat(output.getMetadata(), is(notNullValue()));
-        //assertThat(output.getMetadata().get(0).get());
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "GEMINI_API_KEY", matches = ".*")
+    @Disabled // costs too much
     void generateVideo_whenPromptIsEmpty_shouldThrowException() {
         var runContext = runContextFactory.of();
         var videoGeneration = VideoGeneration.builder()
