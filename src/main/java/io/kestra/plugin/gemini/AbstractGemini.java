@@ -1,6 +1,8 @@
 package io.kestra.plugin.gemini;
 
 import com.google.genai.types.*;
+import io.kestra.core.models.annotations.Plugin;
+import io.kestra.core.models.annotations.Metric;
 import io.kestra.core.models.executions.metrics.Counter;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.Task;
