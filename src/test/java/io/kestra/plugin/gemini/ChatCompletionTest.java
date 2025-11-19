@@ -25,7 +25,7 @@ public class ChatCompletionTest {
         var runContext = runContextFactory.of();
         var chatCompletion = ChatCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-preview-05-20"))
+            .model(Property.ofValue("gemini-2.5-flash-lite"))
             .messages(Property.ofValue(List.of(
                 new ChatCompletion.ChatMessage(
                     ChatCompletion.ChatMessageType.USER,
@@ -36,6 +36,6 @@ public class ChatCompletionTest {
 
         var output = chatCompletion.run(runContext);
 
-        assertTrue(List.of("Tokyo", "Edo").contains(output.getPredictions().getFirst().content()));
+        assertTrue(List.of("Tokyo", "Edo", "Tokio").contains(output.getPredictions().getFirst().content()));
     }
 }

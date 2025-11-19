@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.containsString;
 @KestraTest
 class StructuredOutputCompletionTest {
     private static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY");
-    private static final String GEMINI_2_5_FLASH_PREVIEW_05_20 = "gemini-2.5-flash-preview-05-20";
+    private static final String GEMINI_2_5_FLASH_LITE= "gemini-2.5-flash-lite";
 
     @Inject
     private RunContextFactory runContextFactory;
@@ -27,7 +27,7 @@ class StructuredOutputCompletionTest {
 
         var structuredOutputCompletionBuilder = StructuredOutputCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
+            .model(Property.ofValue(GEMINI_2_5_FLASH_LITE))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
             .jsonResponseSchema(Property.ofValue(
                 """
@@ -63,7 +63,7 @@ class StructuredOutputCompletionTest {
 
         var structuredOutputCompletionBuilder = StructuredOutputCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
+            .model(Property.ofValue(GEMINI_2_5_FLASH_LITE))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
             .jsonResponseSchema(Property.ofValue(
                 """
@@ -100,7 +100,7 @@ class StructuredOutputCompletionTest {
 
         var structuredOutputCompletionBuilder = StructuredOutputCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
+            .model(Property.ofValue(GEMINI_2_5_FLASH_LITE))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
             .build();
 
@@ -116,7 +116,7 @@ class StructuredOutputCompletionTest {
         var runContext = runContextFactory.of();
         var structuredOutputCompletionBuilderWithInvalidJson = StructuredOutputCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue(GEMINI_2_5_FLASH_PREVIEW_05_20))
+            .model(Property.ofValue(GEMINI_2_5_FLASH_LITE))
             .prompt(Property.ofValue("List a few popular cookie recipes, and include the amounts of ingredients?"))
             .jsonResponseSchema(Property.ofValue(
                 """
