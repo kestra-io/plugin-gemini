@@ -51,7 +51,7 @@ public class MultimodalCompletionTest {
 
         var multimodalCompletion = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-preview-05-20"))
+            .model(Property.ofValue("gemini-2.5-flash-lite"))
             .contents(Property.ofValue(List.of(
                 MultimodalCompletion.Content.builder()
                     .content(Property.ofValue("Can you describe this image?"))
