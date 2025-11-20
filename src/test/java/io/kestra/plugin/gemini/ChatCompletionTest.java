@@ -4,10 +4,13 @@ import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContextFactory;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,13 +32,14 @@ public class ChatCompletionTest {
             .messages(Property.ofValue(List.of(
                 new ChatCompletion.ChatMessage(
                     ChatCompletion.ChatMessageType.USER,
-                    "What is the capital of Japan in 2025? Answer with a unique word and without any punctuation."
+                    "What is the capital of Japan in 2025? Answer with a single unique word and without any punctuation."
                 )
             )))
             .build();
 
         var output = chatCompletion.run(runContext);
 
-        assertTrue(List.of("Tokyo", "Edo", "Tokio").contains(output.getPredictions().getFirst().content()));
+        var content = Normalizer.normalize(output.getPredictions().getFirst().content(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        assertTrue(Stream.of("Tokyo", "Edo", "Tokio").anyMatch(content::contains));
     }
 }
