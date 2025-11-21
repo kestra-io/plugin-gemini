@@ -1,0 +1,8 @@
+group: io.kestra.plugin.gemini
+name: "gemini"
+title: "Gemini"
+description: "A plugin to use Google Gemini."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"
