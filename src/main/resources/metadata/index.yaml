@@ -1,8 +1,8 @@
 group: io.kestra.plugin.gemini
 name: "gemini"
 title: "Gemini"
-description: "A plugin to use Google Gemini."
-body: ""
+description: "Tasks that call Google Gemini models for text, chat, structured outputs, multimodal prompts, and video generation."
+body: "Provide your Gemini `apiKey` and target `model` to send prompts for text, chat, or video creation, including structured and multimodal requests, and receive predictions with usage metrics you can route through flows."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"
