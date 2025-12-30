@@ -1,7 +1,10 @@
 @PluginSubGroup(
     title = "Gemini plugin",
     description = "A plugin to use Google Gemini.",
-    categories = PluginSubGroup.PluginCategory.AI
+    categories = PluginSubGroup.PluginCategory.AI,
+    categories = {
+        PluginSubGroup.PluginCategory.AI
+    }
 )
 package io.kestra.plugin.gemini;
 
