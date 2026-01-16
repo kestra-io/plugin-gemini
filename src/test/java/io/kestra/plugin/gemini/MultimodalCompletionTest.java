@@ -69,6 +69,7 @@ public class MultimodalCompletionTest {
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "GEMINI_API_KEY", matches = ".*")
     void editImage_thenModelConfirmsOfficeBackground_usingUriChain() throws Exception {
         String fileName = "generated-image.jpg";
         File src = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI());
