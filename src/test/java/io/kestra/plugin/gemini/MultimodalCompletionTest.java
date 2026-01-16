@@ -80,7 +80,7 @@ public class MultimodalCompletionTest {
 
         var editTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-image-preview"))
+            .model(Property.ofValue("gemini-2.5-flash-image"))
             .contents(Property.ofValue(List.of(
                 MultimodalCompletion.Content.builder()
                     .content(Property.ofValue("Change the background so it clearly looks like a modern office. keep the subject as it is"))
@@ -108,7 +108,7 @@ public class MultimodalCompletionTest {
 
         var verifyTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-image-preview"))
+            .model(Property.ofValue("gemini-2.5-flash-image"))
             .contents(Property.ofValue(List.of(
                 MultimodalCompletion.Content.builder()
                     .content(Property.ofValue("describe the background of this image in a few words"))
