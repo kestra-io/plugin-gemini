@@ -30,9 +30,8 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Generate video using Google's Veo 3 model.",
-    description = "Generate high-quality videos from text prompts using Google's Veo 3 model via the Gemini API. " +
-        "See [Veo 3 documentation](https://developers.googleblog.com/en/veo-3-now-available-gemini-api/) for more information."
+    title = "Generate video with Veo via Gemini",
+    description = "Creates a 1–60s video with Google's Veo 3 model through the Gemini API. Defaults: 10s duration, 5m timeout, audio off. Use Vertex AI with project/location and a GCS output URI; otherwise the file downloads locally."
 )
 @Plugin(
     examples = {
@@ -84,49 +83,49 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
     private static final int DEFAULT_POLL_INTERVAL_MS = 1_000;
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(5);
     @Schema(
-        title = "Video generation prompt",
-        description = "Text description of the video to generate"
+        title = "Video prompt",
+        description = "Text description of the video to generate."
     )
     @NotNull
     private Property<String> prompt;
 
     @Schema(
         title = "Negative prompt",
-        description = "Text description of what should NOT appear in the video"
+        description = "Text describing what should not appear in the video."
     )
     private Property<String> negativePrompt;
 
     @Schema(
         title = "Video duration in seconds",
-        description = "Duration of the generated video in seconds. Default is 10 seconds."
+        description = "Duration of the generated video in seconds. Range 1–60; defaults to 10."
     )
     @Builder.Default
     private Property<Integer> durationInSeconds = Property.ofValue(DEFAULT_DURATION_SECONDS);
 
     @Schema(
         title = "Include audio generation",
-        description = "Whether to generate synchronized audio for the video. Default is false."
+        description = "Whether to generate synchronized audio for the video. Default is false; only supported by audio-capable models."
     )
     @Builder.Default
     private Property<Boolean> includeAudio = Property.ofValue(false);
 
     @Schema(
         title = "Request timeout",
-        description = "Timeout for the video generation request. Default is 5 minutes."
+        description = "Timeout for the video generation request. Defaults to 5 minutes; polling occurs every second."
     )
     @Builder.Default
     private Property<Duration> timeout = Property.ofValue(DEFAULT_TIMEOUT);
 
     @Schema(
         title = "Seed value",
-        description = "Optional seed to make video generation deterministic. If not provided, a random seed is used."
+        description = "Optional seed to make video generation deterministic; random when absent."
     )
     @Nullable
     private Property<Integer> seed;
 
     @Schema(
         title = "Number of videos to generate",
-        description = "The number of videos to generate in the request. Default is 1."
+        description = "Number of videos to request. Defaults to 1."
     )
     @Builder.Default
     private Property<Integer> numberOfVideos = Property.ofValue(1);
@@ -134,40 +133,35 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
 
     @Schema(
         title = "Use Vertex AI",
-        description = "Flag to determine whether to use Google Vertex AI for video generation. " +
-            "When true, output must be written to a GCS URI."
+        description = "Whether to route requests through Vertex AI. Requires project and location; output must use a GCS URI."
     )
     @Builder.Default
     private Property<Boolean> vertexAI = Property.ofValue(false);
 
     @Schema(
         title = "GCS Output URI",
-        description = "Optional Google Cloud Storage (GCS) URI to store the generated video (e.g., gs://your-bucket/path/). " +
-            "If not provided, the video will be returned as a downloadable link."
+        description = "Google Cloud Storage URI for the generated video (e.g., gs://bucket/path/). Required when vertexAI is true."
     )
     @Nullable
     private Property<String> outputGcsUri;
 
     @Schema(
         title = "Project ID",
-        description = "The Google Cloud project ID associated with this request. Required when using project/location for authentication."
+        description = "Google Cloud project ID used when vertexAI is true."
     )
     @Nullable
     private Property<String> project;
 
     @Schema(
         title = "Location",
-        description = "The Google Cloud location (region) where the service is being requested. For example: 'us-central1'."
+        description = "Google Cloud region for Vertex AI, for example `us-central1`."
     )
     @Nullable
     private Property<String> location;
 
     @Schema(
-        title = "File Download Path",
-        description = """
-                 Specify the file name or local path where the generated file will be saved. For example: '/Users/workspace/plugin-gemini/video.mp4'
-                 If not provided, the file will be saved with a default name in the format 'genai_video_{date}.mp4', " +
-                 where {date} will be replaced with the current time in milliseconds format."""
+        title = "File download path",
+        description = "Local file name or path for the downloaded video when not using Vertex AI. Defaults to genai_video_{timestamp}.mp4 in the working directory."
     )
     @Nullable
     private Property<String> downloadFilePath;

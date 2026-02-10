@@ -25,13 +25,16 @@ import java.util.Optional;
 @NoArgsConstructor
 public abstract class AbstractGemini extends Task {
 
-    @Schema(title = "Gemini API Key")
+    @Schema(
+        title = "Gemini API key",
+        description = "Secret used for direct Gemini API calls; render from a secure variable."
+    )
     @NotNull
     protected Property<String> apiKey;
 
     @Schema(
-        title = "Model",
-        description = "Specifies which generative model (e.g., 'gemini-1.5-flash', 'gemini-1.0-pro') to use for the completion."
+        title = "Generative model",
+        description = "Gemini model identifier to call (e.g., `gemini-2.5-flash`, `gemini-1.5-pro`). Must support the requested input type."
     )
     @NotNull
     protected Property<String> model;

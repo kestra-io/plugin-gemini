@@ -25,8 +25,8 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Complete a chat using the Gemini Client.",
-    description = "See [Gemini API about text completion](https://ai.google.dev/gemini-api/docs/text-generation) for more information."
+    title = "Run chat turns with a Gemini model",
+    description = "Streams an ordered list of chat messages to the Gemini chat API and returns the generated replies. Token metrics are emitted; use roles SYSTEM/USER/AI to guide behavior."
 )
 @Plugin(
     examples = {
@@ -70,7 +70,10 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 )
 public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatCompletion.Output> {
 
-    @Schema(title = "List of chat messages in conversational order")
+    @Schema(
+        title = "Chat messages",
+        description = "Ordered conversation history; renderable content per message. Use role SYSTEM/USER/AI to match Gemini expectations."
+    )
     @NotNull
     private Property<List<ChatMessage>> messages;
 

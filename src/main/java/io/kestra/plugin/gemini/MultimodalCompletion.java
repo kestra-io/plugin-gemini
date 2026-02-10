@@ -31,8 +31,8 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Use Multimodal completion using the Gemini Client.",
-    description = "See [Gemini API about multimodal input](https://ai.google.dev/gemini-api/docs/text-generation#multimodal-input) for more information."
+    title = "Generate multimodal responses with Gemini",
+    description = "Sends mixed text and binary parts to a Gemini model (including image-aware variants) and returns text plus any generated images. Images are saved to Kestra storage; token metrics are emitted."
 )
 @Plugin(
     examples = {
@@ -122,7 +122,8 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 public class MultimodalCompletion extends AbstractGemini implements RunnableTask<MultimodalCompletion.Output> {
 
     @Schema(
-        title = "The chat content prompt for the model to respond to"
+        title = "Multimodal content parts",
+        description = "Ordered list of text or file parts; set `mimeType` when sending file URIs from Kestra storage. Defaults to role `user` if not provided."
     )
     @NotNull
     private Property<List<Content>> contents;
@@ -250,7 +251,7 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     @Value
     public static class Output implements io.kestra.core.models.tasks.Output {
         @Schema(
-            title = "The generated response text"
+            title = "Generated response text"
         )
         String text;
 
