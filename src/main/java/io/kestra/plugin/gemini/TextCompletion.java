@@ -21,8 +21,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Complete text using the Gemini Client.",
-    description = "See [Gemini API about text completion](https://ai.google.dev/gemini-api/docs/text-generation) for more information."
+    title = "Generate text with a Gemini model",
+    description = "Sends a single prompt to the configured Gemini model and returns the generated text. Token usage metrics are emitted; ensure the model supports text-only input. See [Gemini API about text completion](https://ai.google.dev/gemini-api/docs/text-generation) for more information."
 )
 @Plugin(
     examples = {
@@ -62,7 +62,10 @@ import java.util.List;
 )
 public class TextCompletion extends AbstractGemini implements RunnableTask<TextCompletion.Output> {
 
-    @Schema(title = "Prompt")
+    @Schema(
+        title = "Text prompt",
+        description = "Prompt string sent to the model after template rendering."
+    )
     @NotNull
     private Property<String> prompt;
 

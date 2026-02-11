@@ -30,8 +30,8 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Generate Structured JSON Output Using the Gemini Client.",
-    description = "See [Gemini API about structured output completion](https://ai.google.dev/gemini-api/docs/structured-output) for more information."
+    title = "Generate JSON with a Gemini schema",
+    description = "Calls Gemini with a prompt and enforces a JSON response shaped by the provided JSON Schema. Response MIME type is fixed to application/json and token metrics are emitted. See [Gemini API about structured output completion](https://ai.google.dev/gemini-api/docs/structured-output) for more information."
 )
 @Plugin(
     examples = {
@@ -90,11 +90,17 @@ public class StructuredOutputCompletion extends AbstractGemini implements Runnab
 
     private static final String APPLICATION_JSON = "application/json";
 
-    @Schema(title = "Prompt")
+    @Schema(
+        title = "Text prompt",
+        description = "Prompt sent to the model before JSON shaping."
+    )
     @NotNull
     private Property<String> prompt;
 
-    @Schema(title = "jsonResponseSchema")
+    @Schema(
+        title = "Response JSON Schema",
+        description = "Draft-style JSON Schema string that constrains the model output."
+    )
     @NotNull
     private Property<String> jsonResponseSchema;
 
