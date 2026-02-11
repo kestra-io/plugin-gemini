@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(
     title = "Generate text with a Gemini model",
-    description = "Sends a single prompt to the configured Gemini model and returns the generated text. Token usage metrics are emitted; ensure the model supports text-only input."
+    description = "Sends a single prompt to the configured Gemini model and returns the generated text. Token usage metrics are emitted; ensure the model supports text-only input. See [Gemini API about text completion](https://ai.google.dev/gemini-api/docs/text-generation) for more information."
 )
 @Plugin(
     examples = {

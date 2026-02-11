@@ -32,7 +32,7 @@ import static io.kestra.core.utils.Rethrow.throwFunction;
 @NoArgsConstructor
 @Schema(
     title = "Generate multimodal responses with Gemini",
-    description = "Sends mixed text and binary parts to a Gemini model (including image-aware variants) and returns text plus any generated images. Images are saved to Kestra storage; token metrics are emitted."
+    description = "Sends mixed text and binary parts to a Gemini model (including image-aware variants) and returns text plus any generated images. Images are saved to Kestra storage; token metrics are emitted. See [Gemini API about multimodal input](https://ai.google.dev/gemini-api/docs/text-generation#multimodal-input) for more information."
 )
 @Plugin(
     examples = {

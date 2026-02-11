@@ -31,7 +31,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @Schema(
     title = "Generate video with Veo via Gemini",
-    description = "Creates a 1–60s video with Google's Veo 3 model through the Gemini API. Defaults: 10s duration, 5m timeout, audio off. Use Vertex AI with project/location and a GCS output URI; otherwise the file downloads locally."
+    description = "Creates a 1–60s video with Google's Veo 3 model through the Gemini API. Defaults: 10s duration, 5m timeout, audio off. Use Vertex AI with project/location and a GCS output URI; otherwise the file downloads locally. See [Veo 3 documentation](https://developers.googleblog.com/en/veo-3-now-available-gemini-api/) for more information."
 )
 @Plugin(
     examples = {

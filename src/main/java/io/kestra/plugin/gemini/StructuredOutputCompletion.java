@@ -31,7 +31,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @Schema(
     title = "Generate JSON with a Gemini schema",
-    description = "Calls Gemini with a prompt and enforces a JSON response shaped by the provided JSON Schema. Response MIME type is fixed to application/json and token metrics are emitted."
+    description = "Calls Gemini with a prompt and enforces a JSON response shaped by the provided JSON Schema. Response MIME type is fixed to application/json and token metrics are emitted. See [Gemini API about structured output completion](https://ai.google.dev/gemini-api/docs/structured-output) for more information."
 )
 @Plugin(
     examples = {
