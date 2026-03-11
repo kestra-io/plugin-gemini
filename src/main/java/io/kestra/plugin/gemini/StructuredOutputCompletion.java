@@ -1,9 +1,14 @@
 package io.kestra.plugin.gemini;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
+
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Metric;
 import io.kestra.core.models.annotations.Plugin;
@@ -11,6 +16,7 @@ import io.kestra.core.models.executions.metrics.Counter;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -19,10 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @SuperBuilder
 @ToString
@@ -68,7 +70,7 @@ import java.util.Optional;
                 """
         )
     },
-     metrics = {
+    metrics = {
         @Metric(
             name = "candidate.token.count",
             type = Counter.TYPE,
@@ -112,7 +114,6 @@ public class StructuredOutputCompletion extends AbstractGemini implements Runnab
         var renderedPrompt = runContext.render(prompt).as(String.class).orElseThrow();
         var responseSchema = runContext.render(jsonResponseSchema).as(String.class).orElseThrow();
 
-
         try (var client = Client.builder().apiKey(renderedApiKey).build()) {
             // Configure generation settings, including the response schema and MIME type
             final GenerateContentConfig generationConfig = GenerateContentConfig.builder()
@@ -124,12 +125,11 @@ public class StructuredOutputCompletion extends AbstractGemini implements Runnab
 
             sendMetrics(runContext, responses.usageMetadata().map(List::of).orElse(List.of()));
 
-            final List<String> predictions = Objects.nonNull(responses.parts()) ?
-                responses.parts().stream()
-                    .map(Part::text)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .toList() : List.of();
+            final List<String> predictions = Objects.nonNull(responses.parts()) ? responses.parts().stream()
+                .map(Part::text)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList() : List.of();
             return StructuredOutputCompletion.Output.builder()
                 .predictions(predictions)
                 .build();

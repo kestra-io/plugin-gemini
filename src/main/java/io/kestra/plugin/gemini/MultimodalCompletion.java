@@ -1,8 +1,15 @@
 package io.kestra.plugin.gemini;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+
 import com.google.genai.Client;
 import com.google.genai.types.FinishReason;
 import com.google.genai.types.Part;
+
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Metric;
@@ -12,16 +19,11 @@ import io.kestra.core.models.flows.State;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 import static io.kestra.core.utils.Rethrow.throwFunction;
 
@@ -148,10 +150,12 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
             var safetyRatings = response.candidates()
                 .flatMap(candidates -> candidates.getFirst().safetyRatings())
                 .orElse(List.of()).stream()
-                .map(safetyRating -> new SafetyRating(
-                    safetyRating.category().toString(),
-                    safetyRating.probability().toString(),
-                    safetyRating.blocked().orElse(false))
+                .map(
+                    safetyRating -> new SafetyRating(
+                        safetyRating.category().toString(),
+                        safetyRating.probability().toString(),
+                        safetyRating.blocked().orElse(false)
+                    )
                 ).toList();
 
             var images = new java.util.ArrayList<GeneratedImage>();
@@ -173,10 +177,12 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
                                     fos.write(data);
                                 }
                                 var stored = runContext.storage().putFile(tempFile);
-                                images.add(GeneratedImage.builder()
-                                    .mimeType(mime)
-                                    .uri(stored)
-                                    .build());
+                                images.add(
+                                    GeneratedImage.builder()
+                                        .mimeType(mime)
+                                        .uri(stored)
+                                        .build()
+                                );
                             } catch (IOException io) {
                                 runContext.logger().warn("Failed to persist generated image: {}", io.getMessage());
                             }
@@ -207,15 +213,16 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
     }
 
     private static String guessExtension(String mime) {
-        if (mime == null) return ".img";
+        if (mime == null)
+            return ".img";
         return switch (mime.toLowerCase()) {
             case "image/jpeg", "image/jpg" -> ".jpg";
-            case "image/png"               -> ".png";
-            case "image/webp"              -> ".webp";
-            case "image/gif"               -> ".gif";
-            case "image/bmp"               -> ".bmp";
-            case "image/tiff"              -> ".tiff";
-            default                        -> ".img";
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            case "image/bmp" -> ".bmp";
+            case "image/tiff" -> ".tiff";
+            default -> ".img";
         };
     }
 

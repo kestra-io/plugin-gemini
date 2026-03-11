@@ -1,5 +1,11 @@
 package io.kestra.plugin.gemini;
 
+import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.genai.Client;
 import com.google.genai.errors.GenAiIOException;
 import com.google.genai.types.GenerateVideosConfig;
@@ -7,22 +13,19 @@ import com.google.genai.types.GenerateVideosOperation;
 import com.google.genai.types.GenerateVideosSource;
 import com.google.genai.types.GeneratedVideo;
 import com.google.genai.types.Video;
+
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.StringUtils;
-
-import java.time.Duration;
-import java.util.Map;
-import java.util.Optional;
 
 @SuperBuilder
 @ToString
@@ -129,7 +132,6 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
     )
     @Builder.Default
     private Property<Integer> numberOfVideos = Property.ofValue(1);
-
 
     @Schema(
         title = "Use Vertex AI",
@@ -261,7 +263,8 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
             .build();
     }
 
-    private GenerateVideosOperation pollUntilComplete(Client client, GenerateVideosOperation operation, final Duration timeoutDuration, final RunContext runContext) throws InterruptedException {
+    private GenerateVideosOperation pollUntilComplete(Client client, GenerateVideosOperation operation, final Duration timeoutDuration, final RunContext runContext)
+        throws InterruptedException {
         long startTime = System.currentTimeMillis();
         long timeoutMillis = timeoutDuration.toMillis();
 
@@ -278,7 +281,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
 
     private Video extractGeneratedVideo(GenerateVideosOperation operation) {
         return operation.response()
-            .orElseThrow(() -> new RuntimeException("No video was generated. Possible reasons: content policy violations or model limitations. Error ::" +operation.error()))
+            .orElseThrow(() -> new RuntimeException("No video was generated. Possible reasons: content policy violations or model limitations. Error ::" + operation.error()))
             .generatedVideos()
             .flatMap(videos -> videos.stream().findFirst())
             .flatMap(GeneratedVideo::video)

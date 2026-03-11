@@ -1,13 +1,15 @@
 package io.kestra.plugin.gemini;
 
-import io.kestra.core.junit.annotations.KestraTest;
-import io.kestra.core.models.property.Property;
-import io.kestra.core.runners.RunContextFactory;
-import jakarta.inject.Inject;
+import java.time.Duration;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
+import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.core.models.property.Property;
+import io.kestra.core.runners.RunContextFactory;
+
+import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -18,7 +20,7 @@ public class VideoGenerationTest {
 
     private static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY");
     private static final String DOWNLOAD_VIDEO_PATH = "video.mp4";
-    private static final String GCS_BUCKET_LOCATION =  System.getenv("GCS_BUCKET_LOCATION");
+    private static final String GCS_BUCKET_LOCATION = System.getenv("GCS_BUCKET_LOCATION");
     private static final String GCS_PROJECT = System.getenv("GCS_PROJECT");
     private static final String GCS_LOCATION = System.getenv("GCS_LOCATION");
 
@@ -44,7 +46,6 @@ public class VideoGenerationTest {
         assertThat(output.getVideoUri(), is(notNullValue()));
         assertThat(output.getMetadata(), is(notNullValue()));
     }
-
 
     @Test
     @Disabled // costs too much
@@ -151,8 +152,10 @@ public class VideoGenerationTest {
             .build();
 
         var exception = assertThrows(Exception.class, () -> videoGeneration.run(runContext));
-        assertThat(exception.getMessage(), anyOf(
-            containsString("API key not valid. Please pass a valid API key")
-        ));
+        assertThat(
+            exception.getMessage(), anyOf(
+                containsString("API key not valid. Please pass a valid API key")
+            )
+        );
     }
 }

@@ -1,20 +1,22 @@
 package io.kestra.plugin.gemini;
 
-import io.kestra.core.junit.annotations.KestraTest;
-import io.kestra.core.models.property.Property;
-import io.kestra.core.runners.RunContextFactory;
-import io.kestra.core.storages.StorageInterface;
-import io.kestra.core.tenant.TenantService;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+
+import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.core.models.property.Property;
+import io.kestra.core.runners.RunContextFactory;
+import io.kestra.core.storages.StorageInterface;
+import io.kestra.core.tenant.TenantService;
+
+import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -35,8 +37,12 @@ public class MultimodalCompletionTest {
     void multimodalCompletion() throws Exception {
 
         var fileName = "generated-image.jpg";
-        var file = new File(Objects.requireNonNull(MultimodalCompletionTest.class
-            .getClassLoader().getResource(fileName)).toURI());
+        var file = new File(
+            Objects.requireNonNull(
+                MultimodalCompletionTest.class
+                    .getClassLoader().getResource(fileName)
+            ).toURI()
+        );
 
         var uri = storageInterface.put(
             TenantService.MAIN_TENANT,
@@ -45,22 +51,28 @@ public class MultimodalCompletionTest {
             new FileInputStream(file)
         );
 
-        var runContext = runContextFactory.of(Map.of(
-            "inputs", Map.of("image", uri)
-        ));
+        var runContext = runContextFactory.of(
+            Map.of(
+                "inputs", Map.of("image", uri)
+            )
+        );
 
         var multimodalCompletion = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue("gemini-2.5-flash-lite"))
-            .contents(Property.ofValue(List.of(
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofValue("Can you describe this image?"))
-                    .build(),
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofExpression("{{ inputs.image }}"))
-                    .mimeType(Property.ofValue("image/jpeg"))
-                    .build()
-            )))
+            .contents(
+                Property.ofValue(
+                    List.of(
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofValue("Can you describe this image?"))
+                            .build(),
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofExpression("{{ inputs.image }}"))
+                            .mimeType(Property.ofValue("image/jpeg"))
+                            .build()
+                    )
+                )
+            )
             .build();
 
         var output = multimodalCompletion.run(runContext);
@@ -81,15 +93,19 @@ public class MultimodalCompletionTest {
         var editTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue("gemini-2.5-flash-image"))
-            .contents(Property.ofValue(List.of(
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofValue("Change the background so it clearly looks like a modern office. keep the subject as it is"))
-                    .build(),
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofExpression("{{ inputs.image }}"))
-                    .mimeType(Property.ofValue("image/jpeg"))
-                    .build()
-            )))
+            .contents(
+                Property.ofValue(
+                    List.of(
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofValue("Change the background so it clearly looks like a modern office. keep the subject as it is"))
+                            .build(),
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofExpression("{{ inputs.image }}"))
+                            .mimeType(Property.ofValue("image/jpeg"))
+                            .build()
+                    )
+                )
+            )
             .build();
 
         var editOut = editTask.run(editRunContext);
@@ -99,25 +115,31 @@ public class MultimodalCompletionTest {
 
         var edited = editOut.getImages().getFirst();
 
-        var verifyRunContext = runContextFactory.of(Map.of(
-            "verify", Map.of(
-                "image", edited.getUri().toString(),
-                "mime", edited.getMimeType()
+        var verifyRunContext = runContextFactory.of(
+            Map.of(
+                "verify", Map.of(
+                    "image", edited.getUri().toString(),
+                    "mime", edited.getMimeType()
+                )
             )
-        ));
+        );
 
         var verifyTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
             .model(Property.ofValue("gemini-2.5-flash-image"))
-            .contents(Property.ofValue(List.of(
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofValue("describe the background of this image in a few words"))
-                    .build(),
-                MultimodalCompletion.Content.builder()
-                    .content(Property.ofExpression("{{ verify.image }}"))
-                    .mimeType(Property.ofExpression("{{ verify.mime }}"))
-                    .build()
-            )))
+            .contents(
+                Property.ofValue(
+                    List.of(
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofValue("describe the background of this image in a few words"))
+                            .build(),
+                        MultimodalCompletion.Content.builder()
+                            .content(Property.ofExpression("{{ verify.image }}"))
+                            .mimeType(Property.ofExpression("{{ verify.mime }}"))
+                            .build()
+                    )
+                )
+            )
             .build();
 
         var verifyOut = verifyTask.run(verifyRunContext);

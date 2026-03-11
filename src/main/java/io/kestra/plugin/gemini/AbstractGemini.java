@@ -1,12 +1,15 @@
 package io.kestra.plugin.gemini;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.google.genai.types.*;
-import io.kestra.core.models.annotations.Plugin;
-import io.kestra.core.models.annotations.Metric;
+
 import io.kestra.core.models.executions.metrics.Counter;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.Task;
 import io.kestra.core.runners.RunContext;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -14,9 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
-import java.util.Optional;
 
 @SuperBuilder
 @ToString
@@ -46,9 +46,10 @@ public abstract class AbstractGemini extends Task {
     }
 
     public record Prediction(Optional<List<SafetyRating>> safetyRatings, CitationMetadata citationMetadata,
-                             String content) {
+        String content) {
         public static Prediction of(Candidate candidate) {
-            return new Prediction(candidate.safetyRatings(),
+            return new Prediction(
+                candidate.safetyRatings(),
                 candidate.citationMetadata().orElse(null),
                 candidate.content().map(Content::text).orElse("")
             );
