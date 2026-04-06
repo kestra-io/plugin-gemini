@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -30,6 +31,7 @@ public abstract class AbstractGemini extends Task {
         description = "Secret used for direct Gemini API calls; render from a secure variable."
     )
     @NotNull
+    @PluginProperty(group = "main")
     protected Property<String> apiKey;
 
     @Schema(
@@ -37,6 +39,7 @@ public abstract class AbstractGemini extends Task {
         description = "Gemini model identifier to call (e.g., `gemini-2.5-flash`, `gemini-1.5-pro`). Must support the requested input type."
     )
     @NotNull
+    @PluginProperty(group = "main")
     protected Property<String> model;
 
     protected void sendMetrics(RunContext runContext, List<GenerateContentResponseUsageMetadata> metadata) {

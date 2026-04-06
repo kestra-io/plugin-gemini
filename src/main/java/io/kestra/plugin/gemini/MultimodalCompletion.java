@@ -26,6 +26,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import static io.kestra.core.utils.Rethrow.throwFunction;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -128,6 +129,7 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
         description = "Ordered list of text or file parts; set `mimeType` when sending file URIs from Kestra storage. Defaults to role `user` if not provided."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<List<Content>> contents;
 
     @Override

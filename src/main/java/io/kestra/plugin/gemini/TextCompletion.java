@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -69,6 +70,7 @@ public class TextCompletion extends AbstractGemini implements RunnableTask<TextC
         description = "Prompt string sent to the model after template rendering."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<String> prompt;
 
     @Override

@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -97,6 +98,7 @@ public class StructuredOutputCompletion extends AbstractGemini implements Runnab
         description = "Prompt sent to the model before JSON shaping."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<String> prompt;
 
     @Schema(
@@ -104,6 +106,7 @@ public class StructuredOutputCompletion extends AbstractGemini implements Runnab
         description = "Draft-style JSON Schema string that constrains the model output."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<String> jsonResponseSchema;
 
     @Override
