@@ -20,6 +20,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import static io.kestra.core.utils.Rethrow.throwFunction;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -77,6 +78,7 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
         description = "Ordered conversation history; renderable content per message. Use role SYSTEM/USER/AI to match Gemini expectations."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<List<ChatMessage>> messages;
 
     @Override

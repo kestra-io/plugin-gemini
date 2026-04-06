@@ -26,6 +26,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -90,12 +91,14 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Text description of the video to generate."
     )
     @NotNull
+    @PluginProperty(group = "main")
     private Property<String> prompt;
 
     @Schema(
         title = "Negative prompt",
         description = "Text describing what should not appear in the video."
     )
+    @PluginProperty(group = "advanced")
     private Property<String> negativePrompt;
 
     @Schema(
@@ -103,6 +106,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Duration of the generated video in seconds. Range 1–60; defaults to 10."
     )
     @Builder.Default
+    @PluginProperty(group = "execution")
     private Property<Integer> durationInSeconds = Property.ofValue(DEFAULT_DURATION_SECONDS);
 
     @Schema(
@@ -110,6 +114,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Whether to generate synchronized audio for the video. Default is false; only supported by audio-capable models."
     )
     @Builder.Default
+    @PluginProperty(group = "advanced")
     private Property<Boolean> includeAudio = Property.ofValue(false);
 
     @Schema(
@@ -117,6 +122,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Timeout for the video generation request. Defaults to 5 minutes; polling occurs every second."
     )
     @Builder.Default
+    @PluginProperty(group = "execution")
     private Property<Duration> timeout = Property.ofValue(DEFAULT_TIMEOUT);
 
     @Schema(
@@ -124,6 +130,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Optional seed to make video generation deterministic; random when absent."
     )
     @Nullable
+    @PluginProperty(group = "advanced")
     private Property<Integer> seed;
 
     @Schema(
@@ -131,6 +138,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Number of videos to request. Defaults to 1."
     )
     @Builder.Default
+    @PluginProperty(group = "advanced")
     private Property<Integer> numberOfVideos = Property.ofValue(1);
 
     @Schema(
@@ -138,6 +146,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Whether to route requests through Vertex AI. Requires project and location; output must use a GCS URI."
     )
     @Builder.Default
+    @PluginProperty(group = "advanced")
     private Property<Boolean> vertexAI = Property.ofValue(false);
 
     @Schema(
@@ -145,6 +154,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Google Cloud Storage URI for the generated video (e.g., gs://bucket/path/). Required when vertexAI is true."
     )
     @Nullable
+    @PluginProperty(group = "connection")
     private Property<String> outputGcsUri;
 
     @Schema(
@@ -152,6 +162,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Google Cloud project ID used when vertexAI is true."
     )
     @Nullable
+    @PluginProperty(group = "connection")
     private Property<String> project;
 
     @Schema(
@@ -159,6 +170,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Google Cloud region for Vertex AI, for example `us-central1`."
     )
     @Nullable
+    @PluginProperty(group = "advanced")
     private Property<String> location;
 
     @Schema(
@@ -166,6 +178,7 @@ public class VideoGeneration extends AbstractGemini implements RunnableTask<Vide
         description = "Local file name or path for the downloaded video when not using Vertex AI. Defaults to genai_video_{timestamp}.mp4 in the working directory."
     )
     @Nullable
+    @PluginProperty(group = "source")
     private Property<String> downloadFilePath;
 
     @Override
