@@ -35,33 +35,18 @@
 </p>
 <p align="center" style="color:grey;"><i>Get started with Kestra in 4 minutes.</i></p>
 
-
 # Kestra Plugin Gemini
 
-> Plugin to use [Gemini](https://gemini.google.com/) directly with an API Key
+## Why
 
-Through this plugin you can use [Gemini](https://gemini.google.com/) directly with an API Key, this allows you to use the same API Key to run multiple tasks and have the same account used for all of them.
+- What user problem does this solve? Teams need to call Google Gemini models for text, chat, structured outputs, multimodal prompts, and video generation from orchestrated workflows instead of relying on manual console work, ad hoc scripts, or disconnected schedulers.
+- Why would a team adopt this plugin in a workflow? It keeps Gemini steps in the same Kestra flow as upstream preparation, approvals, retries, notifications, and downstream systems.
+- What operational/business outcome does it enable? It reduces manual handoffs and fragmented tooling while improving reliability, traceability, and delivery speed for processes that depend on Gemini.
 
-![Kestra orchestrator](https://kestra.io/video.gif)
+## What
 
-## Running the project in local
-### Prerequisites
-- Java 21
-- Docker
-
-### Running tests
-```
-./gradlew check --parallel
-```
-
-### Launching the whole app
-```
-./gradlew shadowJar && docker build -t kestra-custom . && docker run --rm -p 8080:8080 kestra-custom server local
-```
-> [!NOTE]
-> You need to relaunch this whole command everytime you make a change to your plugin
-
-go to http://localhost:8080, your plugin will be available to use
+- Provides plugin components under `io.kestra.plugin.gemini`.
+- Includes classes such as `VideoGeneration`, `MultimodalCompletion`, `TextCompletion`, `StructuredOutputCompletion`.
 
 ## Documentation
 * Full documentation can be found under: [kestra.io/docs](https://kestra.io/docs)
