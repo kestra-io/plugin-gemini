@@ -7,8 +7,9 @@
 
 ## Why
 
-- This plugin integrates Kestra with Gemini.
-- It provides tasks that call Google Gemini models for text, chat, structured outputs, multimodal prompts, and video generation.
+- What user problem does this solve? Teams need to call Google Gemini models for text, chat, structured outputs, multimodal prompts, and video generation from orchestrated workflows instead of relying on manual console work, ad hoc scripts, or disconnected schedulers.
+- Why would a team adopt this plugin in a workflow? It keeps Gemini steps in the same Kestra flow as upstream preparation, approvals, retries, notifications, and downstream systems.
+- What operational/business outcome does it enable? It reduces manual handoffs and fragmented tooling while improving reliability, traceability, and delivery speed for processes that depend on Gemini.
 
 ## How
 
