@@ -31,7 +31,7 @@ public abstract class AbstractGemini extends Task {
         description = "Secret used for direct Gemini API calls; render from a secure variable."
     )
     @NotNull
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "main", secret = true)
     protected Property<String> apiKey;
 
     @Schema(
