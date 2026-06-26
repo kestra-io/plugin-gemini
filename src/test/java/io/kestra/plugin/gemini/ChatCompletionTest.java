@@ -13,6 +13,7 @@ import io.kestra.core.runners.RunContextFactory;
 
 import jakarta.inject.Inject;
 
+import static io.kestra.plugin.gemini.GeminiTestUtils.runOrSkipOnTransientError;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @KestraTest
@@ -42,7 +43,7 @@ public class ChatCompletionTest {
             )
             .build();
 
-        var output = chatCompletion.run(runContext);
+        var output = runOrSkipOnTransientError(() -> chatCompletion.run(runContext));
 
         var content = Normalizer.normalize(output.getPredictions().getFirst().content(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         assertTrue(Stream.of("Tokyo", "Edo", "Tokio").anyMatch(content::contains));
