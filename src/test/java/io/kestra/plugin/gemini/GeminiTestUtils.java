@@ -19,11 +19,6 @@ final class GeminiTestUtils {
     private GeminiTestUtils() {
     }
 
-    /**
-     * Runs a live Gemini call. If Gemini returns a transient error (for example
-     * 503 "high demand"), the test is aborted and reported as skipped, so CI does
-     * not go red on Google's availability blips. Any other error is rethrown.
-     */
     static <T> T runOrSkipOnTransientError(GeminiCall<T> call) throws Exception {
         try {
             return call.call();
