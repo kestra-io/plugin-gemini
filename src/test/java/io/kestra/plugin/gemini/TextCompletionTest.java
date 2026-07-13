@@ -9,6 +9,7 @@ import io.kestra.core.runners.RunContextFactory;
 
 import jakarta.inject.Inject;
 
+import static io.kestra.plugin.gemini.GeminiTestUtils.runOrSkipOnTransientError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @KestraTest
@@ -29,7 +30,7 @@ public class TextCompletionTest {
             .prompt(Property.ofValue("Where is Tbilisi? Answer in one word without any punctuation."))
             .build();
 
-        var output = textCompletion.run(runContext);
+        var output = runOrSkipOnTransientError(() -> textCompletion.run(runContext));
 
         assertEquals("Georgia", output.getPredictions().getFirst().content());
     }

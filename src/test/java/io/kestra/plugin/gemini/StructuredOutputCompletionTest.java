@@ -10,6 +10,7 @@ import io.kestra.core.runners.RunContextFactory;
 
 import jakarta.inject.Inject;
 
+import static io.kestra.plugin.gemini.GeminiTestUtils.runOrSkipOnTransientError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
@@ -53,7 +54,7 @@ class StructuredOutputCompletionTest {
             )
             .build();
 
-        var output = structuredOutputCompletionBuilder.run(runContext);
+        var output = runOrSkipOnTransientError(() -> structuredOutputCompletionBuilder.run(runContext));
         assertThat(output.getPredictions().toString(), containsString("recipeName"));
         assertThat(output.getPredictions().toString(), containsString("ingredients"));
         assertThat(output.getPredictions().toString(), containsString("\"recipeName\":"));
@@ -93,7 +94,7 @@ class StructuredOutputCompletionTest {
             )
             .build();
 
-        final var output = structuredOutputCompletionBuilder.run(runContext);
+        final var output = runOrSkipOnTransientError(() -> structuredOutputCompletionBuilder.run(runContext));
         assertThat(output.getPredictions().toString(), containsString("predictions"));
         assertThat(output.getPredictions().toString(), containsString("content"));
     }

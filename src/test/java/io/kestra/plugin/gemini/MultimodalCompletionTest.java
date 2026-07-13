@@ -18,6 +18,7 @@ import io.kestra.core.tenant.TenantService;
 
 import jakarta.inject.Inject;
 
+import static io.kestra.plugin.gemini.GeminiTestUtils.runOrSkipOnTransientError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -75,7 +76,7 @@ public class MultimodalCompletionTest {
             )
             .build();
 
-        var output = multimodalCompletion.run(runContext);
+        var output = runOrSkipOnTransientError(() -> multimodalCompletion.run(runContext));
 
         assertThat(output.getText(), containsString("kitten"));
     }
@@ -108,7 +109,7 @@ public class MultimodalCompletionTest {
             )
             .build();
 
-        var editOut = editTask.run(editRunContext);
+        var editOut = runOrSkipOnTransientError(() -> editTask.run(editRunContext));
 
         assertThat(editOut.isBlocked(), is(false));
         assertThat(editOut.getImages(), notNullValue());
@@ -142,7 +143,7 @@ public class MultimodalCompletionTest {
             )
             .build();
 
-        var verifyOut = verifyTask.run(verifyRunContext);
+        var verifyOut = runOrSkipOnTransientError(() -> verifyTask.run(verifyRunContext));
 
         assertThat(verifyOut.isBlocked(), is(false));
         assertThat("some text describing the background", verifyOut.getText(), notNullValue());

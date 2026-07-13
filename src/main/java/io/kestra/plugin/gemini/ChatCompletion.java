@@ -119,7 +119,7 @@ public class ChatCompletion extends AbstractGemini implements RunnableTask<ChatC
     @Builder
     @Getter
     public static class Output implements io.kestra.core.models.tasks.Output {
-        @Schema(title = "List of text predictions made by the model.")
+        @Schema(title = "List of text predictions made by the model")
         private List<Prediction> predictions;
     }
 
