@@ -81,6 +81,8 @@ import io.kestra.core.models.annotations.PluginProperty;
                     type: io.kestra.plugin.gemini.MultimodalCompletion
                     contents:
                       - content: "{{ inputs.gen_prompt }}"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
 
                   - id: edit
                     type: io.kestra.plugin.gemini.MultimodalCompletion
@@ -88,6 +90,8 @@ import io.kestra.core.models.annotations.PluginProperty;
                       - content: "{{ inputs.edit_prompt }}"
                       - mimeType: "{{ outputs.generate.images[0].mimeType }}"
                         content: "{{ outputs.generate.images[0].uri }}"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
 
                   - id: analyze
                     type: io.kestra.plugin.gemini.MultimodalCompletion
@@ -95,12 +99,8 @@ import io.kestra.core.models.annotations.PluginProperty;
                       - content: "Describe the mood and style of this image."
                       - mimeType: "{{ outputs.edit.images[0].mimeType }}"
                         content: "{{ outputs.edit.images[0].uri }}"
-
-                pluginDefaults:
-                  - type: io.kestra.plugin.gemini.MultimodalCompletion
-                    values:
-                      apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                      model: "gemini-2.5-flash-image-preview"
+                    apiKey: "{{ secret('GEMINI_API_KEY') }}"
+                    model: "gemini-2.5-flash-image-preview"
                 """
         )
     },
