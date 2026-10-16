@@ -17,6 +17,7 @@ import com.google.genai.types.Video;
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
+import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
@@ -26,7 +27,6 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -53,7 +53,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                     model: "veo-3.0-generate-preview"
                     prompt: "a close-up shot of a golden retriever playing in a field of sunflowers"
                     negativePrompt: "barking, woofing"
-                    duration: 5
+                    durationInSeconds: 5
                 """
         ),
         @Example(
@@ -68,7 +68,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                     type: io.kestra.plugin.gemini.VideoGeneration
                     model: "veo-3.0-generate-preview"
                     prompt: "a serene mountain landscape with flowing rivers and birds chirping"
-                    duration: 8
+                    durationInSeconds: 8
                     includeAudio: true
                     vertexAI: true
                     project: "{{ secret('GCP_PROJECT_ID') }}"
