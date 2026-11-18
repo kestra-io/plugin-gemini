@@ -30,7 +30,7 @@ public class ChatCompletionTest {
         var runContext = runContextFactory.of();
         var chatCompletion = ChatCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-lite"))
+            .model(Property.ofValue("gemini-3.5-flash-lite"))
             .messages(
                 Property.ofValue(
                     List.of(

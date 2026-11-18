@@ -49,7 +49,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                   - id: gemini_structured_json_completion
                     type: io.kestra.plugin.gemini.StructuredOutputCompletion
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-lite"
+                    model: "gemini-3.5-flash-lite"
                     prompt: What are the weather predictions for tomorrow in London?
                     jsonResponseSchema: |
                         {

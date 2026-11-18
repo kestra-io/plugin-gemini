@@ -54,7 +54,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                   - id: multimodal_completion
                     type: io.kestra.plugin.gemini.MultimodalCompletion
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash"
+                    model: "gemini-3.8-flash"
                     contents:
                       - content: Can you describe this image?
                       - mimeType: image/jpeg
@@ -82,7 +82,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                     contents:
                       - content: "{{ inputs.gen_prompt }}"
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
+                    model: "gemini-3.1-flash-lite-image"
 
                   - id: edit
                     type: io.kestra.plugin.gemini.MultimodalCompletion
@@ -91,7 +91,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                       - mimeType: "{{ outputs.generate.images[0].mimeType }}"
                         content: "{{ outputs.generate.images[0].uri }}"
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
+                    model: "gemini-3.1-flash-lite-image"
 
                   - id: analyze
                     type: io.kestra.plugin.gemini.MultimodalCompletion
@@ -100,7 +100,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                       - mimeType: "{{ outputs.edit.images[0].mimeType }}"
                         content: "{{ outputs.edit.images[0].uri }}"
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash-image-preview"
+                    model: "gemini-3.1-flash-lite-image"
                 """
         )
     },
@@ -266,7 +266,7 @@ public class MultimodalCompletion extends AbstractGemini implements RunnableTask
 
         @Schema(
             title = "Generated images stored in Kestra and exposed as URIs",
-            description = "When using image-generating/editing models like gemini-2.5-flash-image-preview, this field contains one or more Kestra storage URIs."
+            description = "When using image-generating/editing models like gemini-3.1-flash-lite-image, this field contains one or more Kestra storage URIs."
         )
         List<GeneratedImage> images;
 

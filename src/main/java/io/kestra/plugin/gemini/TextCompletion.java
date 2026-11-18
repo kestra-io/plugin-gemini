@@ -40,7 +40,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                   - id: text_completion
                     type: io.kestra.plugin.gemini.TextCompletion
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash"
+                    model: "gemini-3.8-flash"
                     prompt: What color is the sky? Answer with a unique word and without any punctuation.
                 """
         )

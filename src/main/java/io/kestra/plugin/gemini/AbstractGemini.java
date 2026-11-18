@@ -36,7 +36,7 @@ public abstract class AbstractGemini extends Task {
 
     @Schema(
         title = "Generative model",
-        description = "Gemini model identifier to call (e.g., `gemini-2.5-flash`, `gemini-1.5-pro`). Must support the requested input type."
+        description = "Gemini model identifier to call (e.g., `gemini-3.8-flash`, `gemini-3.5-flash-lite`). Must support the requested input type."
     )
     @NotNull
     @PluginProperty(group = "main")
