@@ -44,7 +44,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                   - id: chat_completion
                     type: io.kestra.plugin.gemini.ChatCompletion
                     apiKey: "{{ secret('GEMINI_API_KEY') }}"
-                    model: "gemini-2.5-flash"
+                    model: "gemini-3.8-flash"
                     messages:
                       - type: SYSTEM
                         content: You are a helpful assistant, answer concisely, avoid overly casual language or unnecessary verbosity.

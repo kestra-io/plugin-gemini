@@ -60,7 +60,7 @@ public class MultimodalCompletionTest {
 
         var multimodalCompletion = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-lite"))
+            .model(Property.ofValue("gemini-3.5-flash-lite"))
             .contents(
                 Property.ofValue(
                     List.of(
@@ -93,7 +93,7 @@ public class MultimodalCompletionTest {
 
         var editTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-image"))
+            .model(Property.ofValue("gemini-3.1-flash-lite-image"))
             .contents(
                 Property.ofValue(
                     List.of(
@@ -127,7 +127,7 @@ public class MultimodalCompletionTest {
 
         var verifyTask = MultimodalCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-image"))
+            .model(Property.ofValue("gemini-3.1-flash-lite-image"))
             .contents(
                 Property.ofValue(
                     List.of(

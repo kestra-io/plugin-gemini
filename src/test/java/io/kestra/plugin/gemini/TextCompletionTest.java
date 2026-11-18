@@ -26,7 +26,7 @@ public class TextCompletionTest {
         var runContext = runContextFactory.of();
         var textCompletion = TextCompletion.builder()
             .apiKey(Property.ofValue(GEMINI_API_KEY))
-            .model(Property.ofValue("gemini-2.5-flash-lite"))
+            .model(Property.ofValue("gemini-3.5-flash-lite"))
             .prompt(Property.ofValue("Where is Tbilisi? Answer in one word without any punctuation."))
             .build();
 
